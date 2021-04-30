@@ -3,7 +3,7 @@ from .views import Register, Login, RefreshToken, GetProfile, EditProfile
 
 urlpatterns = [
     path("sign-up/", Register.as_view(), name="signup"),
-    path('sign-in/', Login.as_view(), name="signin"),
+    path('sign-in/', Login.as_view(), name="sign"),
     path("refresh-token/", RefreshToken.as_view(), name="refresh-token"),
 
     path('profile/', GetProfile.as_view(), name="profile"),

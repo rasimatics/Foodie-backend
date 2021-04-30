@@ -17,4 +17,28 @@ class ListOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ["id", "items", 'address', 'total_amount', 'delivery_method', 'payment_method']
+        fields = ["id", "items", 'address', 'total_amount', 'delivery_method', 'payment_method', 'user']
+
+
+class CreateOrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = ['id', 'quantity', 'item']
+
+
+class CreateOrderSerializer(serializers.ModelSerializer):
+    items = CreateOrderItemSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = ["id", 'address', 'items', 'total_amount', 'delivery_method', 'payment_method', 'user']
+
+    def create(self, validated_data):
+        items = validated_data.pop('items')
+        order = Order(**validated_data)
+        order.save()
+
+        for data in items:
+            OrderItem.objects.create(quantity=data['quantity'], item=data['item'], order=order)
+
+        return order

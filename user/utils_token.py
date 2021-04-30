@@ -9,7 +9,7 @@ def generate_token(user):
     payload = {
         'id': user.id,
         'username': user.username,
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=10),
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=60),
         'iat': datetime.datetime.utcnow()
     }
 
