@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import Item, Image
+from .models import Item, Image, Category
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = "__all__"
 
 
 class ImageSerializer(serializers.ModelSerializer):

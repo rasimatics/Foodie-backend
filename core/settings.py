@@ -21,6 +21,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '0q-srm=xg*pg1m!*k0nbje(1#!$$5yqk*ddd#j46d%)%3$_*6y'
+REFRESH_TOKEN_SECRET = '12-mre=xg*pg1m!*k0n*^e(1#!$$5yqk*ddd#j46d%)%3$_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -43,7 +44,6 @@ INSTALLED_APPS = [
     'order',
 
     'rest_framework',
-    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [
@@ -88,9 +88,13 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
-     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-    ]
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated'
+    # ],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'user.authentication.JWTAuthentication',
+    ),
 }
 
 
@@ -135,4 +139,7 @@ MEDIA_URL = '/media/'
 
 STATIC_ROOT = BASE_DIR / 'static'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 

@@ -20,6 +20,9 @@ class Category(models.Model):
 class Supplier(models.Model):
     title = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.title
+
 
 class Item(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="category_items")

@@ -1,8 +1,8 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.filters import OrderingFilter, SearchFilter
-from .serializers import ItemSerializer, ItemDetailSerializer
-from .models import Item
+from rest_framework.filters import SearchFilter
+from .serializers import ItemSerializer, ItemDetailSerializer, CategorySerializer
+from .models import Item, Category
 
 
 class ItemList(generics.ListAPIView):
@@ -18,5 +18,12 @@ class ItemDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Item.objects.all()
     permission_classes = [IsAuthenticated]
     lookup_field = 'id'
+
+
+class CategoryList(generics.ListAPIView):
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Category.objects.all()
+
 
 

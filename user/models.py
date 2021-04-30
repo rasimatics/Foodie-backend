@@ -1,12 +1,41 @@
 from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from rest_framework.authtoken.models import Token
+from django.db import models
+
+
 
 User = get_user_model()
 
 
-@receiver(post_save, sender=User)
-def create_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        Token.objects.create(user=instance)
+# @receiver(post_save, sender=User)
+# def create_token(sender, instance=None, created=False, **kwargs):
+#     if created:
+#         Token.objects.create(user=instance)
+
+
+PROFILE_CHOICES = (
+    ('Card','Card'),
+    ('Bank Account','Bank Account'),
+    ('Paypal','Paypal')
+)
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=40, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    address = models.CharField(max_length=200, null=True, blank=True)
+    payment_method = models.CharField(max_length=30, choices=PROFILE_CHOICES, default="Card")
+    number = models.CharField(max_length=40, null=True, blank=True)
+
+    def __str__(self):
+        return self.full_name or "Default Full Name"
+
+    class Meta:
+        verbose_name_plural = 'Profiles'
+
+
+
+
+
