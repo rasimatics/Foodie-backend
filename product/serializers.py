@@ -15,16 +15,14 @@ class ImageSerializer(serializers.ModelSerializer):
 
 
 class ItemSerializer(serializers.ModelSerializer):
-    category = serializers.ReadOnlyField(source='category.title')
-    brand = serializers.ReadOnlyField(source='brand.title')
     image = serializers.SerializerMethodField()
 
     class Meta:
         model = Item
-        fields = ['id', 'title', 'description', 'category', 'brand', 'image']
+        fields = ['id', 'title', 'price', 'image']
 
-
-    def get_image(self,obj):
+    @staticmethod
+    def get_image(obj):
         image = ImageSerializer(obj.images.first())
         return image.data
 
@@ -36,5 +34,4 @@ class ItemDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        fields = ['id', 'title', 'description', 'category', 'brand', 'images']
-
+        fields = ['id', 'title', 'description', 'price', 'category', 'brand', 'images']
