@@ -1,20 +1,27 @@
 import jwt
 from rest_framework import exceptions
-from rest_framework.authentication import BaseAuthentication, TokenAuthentication
+from rest_framework.authentication import BaseAuthentication
 from core import settings
 from .models import User
 
 
 class JWTAuthentication(BaseAuthentication):
+    keyword = "CToken"
 
     def authenticate(self, request):
-        header = request.headers.get('Authorization')
+        header = request.headers.get('Authorization').split()
 
-        if not header:
+        if not header or header[0].lower() != self.keyword.lower():
             return None
 
+        if len(header) == 1:
+            raise exceptions.AuthenticationFailed("Invalid token header")
+
+        elif len(header) > 2:
+            raise exceptions.AuthenticationFailed("Invalid token header")
+
         try:
-            access_token = header.split(" ")[1]
+            access_token = header[1]
             payload = jwt.decode(access_token, settings.SECRET_KEY, algorithms='HS256')
 
         except jwt.exceptions.ImmatureSignatureError:
@@ -35,4 +42,3 @@ class JWTAuthentication(BaseAuthentication):
             raise exceptions.AuthenticationFailed("User not found")
 
         return user, access_token
-
