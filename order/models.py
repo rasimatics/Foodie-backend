@@ -26,7 +26,7 @@ class Order(models.Model):
         return sum(item.get_price() for item in self.items.all())
 
     def __str__(self):
-        return f"{self.user}'s order"
+        return f"{self.user.username}'s order"
 
 
 class OrderItem(models.Model):
