@@ -1,18 +1,19 @@
 from rest_framework import generics
-from .serializers import ListOrderSerializer, CreateOrderSerializer
+from .serializers import OrderSerializer, CreateUpdateDestroyOrderSerializer
 from .models import Order
 
 
 class ListOrders(generics.ListAPIView):
-    serializer_class = ListOrderSerializer
+    serializer_class = OrderSerializer
     queryset = Order.objects.all()
 
 
 class CreateOrder(generics.CreateAPIView):
-    serializer_class = CreateOrderSerializer
-
+    serializer_class = CreateUpdateDestroyOrderSerializer
 
 
 class RetrieveUpdateDestroyOrder(generics.RetrieveUpdateDestroyAPIView):
-    pass
+    lookup_field = "id"
+    serializer_class = CreateUpdateDestroyOrderSerializer
+    queryset = Order.objects.all()
 
