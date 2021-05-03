@@ -3,7 +3,10 @@ from .models import Order, OrderItem
 from product.serializers import ItemSerializer
 
 
-class ListOrderItemSerializer(serializers.ModelSerializer):
+class OrderItemSerializer(serializers.ModelSerializer):
+    """
+        Get list of order items
+    """
     item = ItemSerializer()
     price = serializers.FloatField(source="get_price")
 
@@ -14,7 +17,10 @@ class ListOrderItemSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    items = ListOrderItemSerializer(many=True, read_only=True)
+    """
+        Get list of orders
+    """
+    items = OrderItemSerializer(many=True, read_only=True)
     total_amount = serializers.FloatField(source="get_total_amount")
 
     class Meta:
@@ -23,12 +29,18 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class CreateUpdateOrderItemSerializer(serializers.ModelSerializer):
+    """
+        Create order items
+    """
     class Meta:
         model = OrderItem
         fields = ['id', 'quantity', 'item']
 
 
 class CreateUpdateDestroyOrderSerializer(serializers.ModelSerializer):
+    """
+        Create and update order (also order items)
+    """
     items = CreateUpdateOrderItemSerializer(many=True)
 
     class Meta:
