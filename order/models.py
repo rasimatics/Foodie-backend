@@ -18,10 +18,12 @@ PAYMENT_CHOICES = (
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.CharField(max_length=300, null=True, blank=True)
-    total_amount = models.FloatField(null=True, blank=True)
     delivery_method = models.CharField(max_length=30, choices=DELIVERY_CHOICES, null=True, blank=True)
     payment_method = models.CharField(max_length=30, choices=PAYMENT_CHOICES, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def get_total_amount(self):
+        return sum(item.get_price() for item in self.items.all())
 
     def __str__(self):
         return f"{self.user}'s order"
@@ -31,6 +33,9 @@ class OrderItem(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
     quantity = models.IntegerField()
+
+    def get_price(self):
+        return self.item.price * self.quantity
 
     def __str__(self):
         return f"Order - {self.item}"

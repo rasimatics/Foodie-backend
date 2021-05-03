@@ -5,15 +5,17 @@ from product.serializers import ItemSerializer
 
 class ListOrderItemSerializer(serializers.ModelSerializer):
     item = ItemSerializer(read_only=True)
+    price = serializers.FloatField(source="get_price")
 
     class Meta:
         model = OrderItem
-        fields = ['id', 'quantity', 'item']
+        fields = ['id', 'quantity', 'item', 'price']
         depth = 1
 
 
 class ListOrderSerializer(serializers.ModelSerializer):
     items = ListOrderItemSerializer(read_only=True, many=True)
+    total_amount = serializers.FloatField(source="get_total_amount")
 
     class Meta:
         model = Order
@@ -31,7 +33,7 @@ class CreateOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ["id", 'address', 'items', 'total_amount', 'delivery_method', 'payment_method', 'user']
+        fields = ["id", 'address', 'items', 'delivery_method', 'payment_method', 'user']
 
     def create(self, validated_data):
         items = validated_data.pop('items')
