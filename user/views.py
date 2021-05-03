@@ -1,6 +1,6 @@
 from rest_framework import exceptions, status
 from rest_framework.generics import CreateAPIView, UpdateAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import UserCreateSerializer, ProfileSerializer
@@ -13,12 +13,15 @@ class Register(CreateAPIView):
         Register user
     """
     serializer_class = UserCreateSerializer
+    permission_classes = [AllowAny, ]
 
 
 class Login(APIView):
     """
         Login user
     """
+    permission_classes = [AllowAny,]
+
     @staticmethod
     def post(request):
         username = request.data['username']
@@ -81,22 +84,12 @@ class EditProfile(UpdateAPIView):
     """
         Update profile information
     """
-    permission_classes = [IsAuthenticated]
     serializer_class = ProfileSerializer
     queryset = Profile.objects.all()
     lookup_field = "id"
 
 
 """
-GenericApiView and methods
-perform_create
-ListApiView
-Mixins: ListModelMixin CreateModelMixin RetrieveModelMixin UpdateModelMixin DestroyModelMixin
-ConcreteViewClasses: CreateApiView ListApiView RetrieveApiView UpdateApiView DestroyApiView
-ListCreateApiView RetrieveUpdateApiView RetrieveDestroyApiView 
-RetrieveUpdateDestroyApiView
-
-lookup_fields
 MultipleFieldLookupMixin: custom mixin
 
 Viewsets
@@ -107,11 +100,6 @@ ReadOnlyModelViewSet
 Router
 
 ModelViewSet extra action
-
-Nested Serializer
-PrimaryKeyRelatedField
-Other related fields
-
 HyperlinkedModelSerializer
 
 """
