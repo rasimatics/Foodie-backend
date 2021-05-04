@@ -69,7 +69,7 @@ class RefreshToken(APIView):
 
 class GetOrEditProfile(APIView):
     """
-        Get user profile if not exist create new one
+        Get, Create and Update user profile
     """
     @staticmethod
     def post(request):
