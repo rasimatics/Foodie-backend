@@ -1,4 +1,4 @@
-    from rest_framework import exceptions, status
+from rest_framework import exceptions, status
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -72,19 +72,35 @@ class GetOrEditProfile(APIView):
         Get user profile if not exist create new one
     """
     @staticmethod
+    def post(request):
+        user_profile = Profile.objects.filter(user=request.user)
+        if not user_profile.exists():
+            profile_serialize = ProfileSerializer(data=request.data, context={"request": request})
+            if profile_serialize.is_valid():
+                profile_serialize.save()
+            else:
+                return Response(profile_serialize.errors, 400)
+            return Response(profile_serialize.data, 200)
+        return Response({"Error": "User has profile"}, 400)
+
+    @staticmethod
     def get(request):
         user_profile = Profile.objects.filter(user=request.user)
-        profile = user_profile.first() if user_profile.exists() else Profile.objects.create(user=request.user)
-        profile_serialize = ProfileSerializer(profile)
-        return Response(profile_serialize.data, 200)
+        if user_profile.exists():
+            profile = user_profile.first()
+            profile_serialize = ProfileSerializer(profile)
+            return Response(profile_serialize.data, 200)
+        return Response({"Error": "profile not found"})
 
     @staticmethod
     def put(request):
-        profile = Profile.objects.filter(user=request.user).first()
-        profile_serialize = ProfileSerializer(profile, request.data)
-        profile_serialize.is_valid(raise_exception=True)
-        profile_serialize.save()
-        return Response(profile_serialize.data, 200)
+        profile = Profile.objects.filter(user=request.user)
+        if profile.exists():
+            profile_serialize = ProfileSerializer(profile.first(), request.data)
+            profile_serialize.is_valid(raise_exception=True)
+            profile_serialize.save()
+            return Response(profile_serialize.data, 200)
+        return Response({"Error": "profile not found"}, status=404)
 
 
 
@@ -108,11 +124,6 @@ HyperlinkedModelSerializer
 """
 Tasks
 ----------------------------
-1. Token Auth
-2. Create Models
-3. Serializers
-4. Generic Views
 5. Viewsets
-
 ----------------------------
 """

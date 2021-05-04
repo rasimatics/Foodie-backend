@@ -23,4 +23,8 @@ class UserCreateSerializer(ModelSerializer):
 class ProfileSerializer(ModelSerializer):
     class Meta:
         model = Profile
-        exclude = ['user']
+        fields = ["full_name", "email", "number", "address", "payment_method", "user"]
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(ProfileSerializer, self).create(validated_data)

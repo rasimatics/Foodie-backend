@@ -13,7 +13,7 @@ PROFILE_CHOICES = (
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     full_name = models.CharField(max_length=40, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     address = models.CharField(max_length=200, null=True, blank=True)
@@ -27,7 +27,7 @@ class Profile(models.Model):
         verbose_name_plural = 'Profiles'
 
 
-@receiver(post_save,sender=User)
+@receiver(post_save, sender=User)
 def create_profile(sender, instance, **kwargs):
     Profile.objects.create(user=instance)
 
