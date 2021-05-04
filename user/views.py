@@ -1,5 +1,5 @@
-from rest_framework import exceptions, status
-from rest_framework.generics import CreateAPIView, UpdateAPIView
+    from rest_framework import exceptions, status
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -13,7 +13,7 @@ class Register(CreateAPIView):
         Register user
     """
     serializer_class = UserCreateSerializer
-    permission_classes = [AllowAny, ]
+    permission_classes = [AllowAny,]
 
 
 class Login(APIView):
@@ -52,6 +52,8 @@ class RefreshToken(APIView):
     """
         Refresh token after expired
     """
+    permission_classes = [AllowAny, ]
+
     @staticmethod
     def post(request):
         refresh_token = request.data.get("refresh_token")
@@ -65,28 +67,27 @@ class RefreshToken(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
 
-class GetProfile(APIView):
+class GetOrEditProfile(APIView):
     """
         Get user profile if not exist create new one
     """
     @staticmethod
     def get(request):
         user_profile = Profile.objects.filter(user=request.user)
-        if user_profile.exists():
-            profile_serialize = ProfileSerializer(user_profile.first())
-        else:
-            new_profile = Profile.objects.create(user=request.user)
-            profile_serialize = ProfileSerializer(new_profile)
+        profile = user_profile.first() if user_profile.exists() else Profile.objects.create(user=request.user)
+        profile_serialize = ProfileSerializer(profile)
+        return Response(profile_serialize.data, 200)
+
+    @staticmethod
+    def put(request):
+        profile = Profile.objects.filter(user=request.user).first()
+        profile_serialize = ProfileSerializer(profile, request.data)
+        profile_serialize.is_valid(raise_exception=True)
+        profile_serialize.save()
         return Response(profile_serialize.data, 200)
 
 
-class EditProfile(UpdateAPIView):
-    """
-        Update profile information
-    """
-    serializer_class = ProfileSerializer
-    queryset = Profile.objects.all()
-    lookup_field = "id"
+
 
 
 """

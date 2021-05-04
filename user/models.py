@@ -4,20 +4,11 @@ from django.dispatch import receiver
 from django.db import models
 
 
-
 User = get_user_model()
-
-
-# @receiver(post_save, sender=User)
-# def create_token(sender, instance=None, created=False, **kwargs):
-#     if created:
-#         Token.objects.create(user=instance)
-
-
 PROFILE_CHOICES = (
-    ('Card','Card'),
-    ('Bank Account','Bank Account'),
-    ('Paypal','Paypal')
+    ('Card', 'Card'),
+    ('Bank Account', 'Bank Account'),
+    ('Paypal', 'Paypal')
 )
 
 
@@ -36,6 +27,8 @@ class Profile(models.Model):
         verbose_name_plural = 'Profiles'
 
 
-
+@receiver(post_save,sender=User)
+def create_profile(sender, instance, **kwargs):
+    Profile.objects.create(user=instance)
 
 

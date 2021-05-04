@@ -9,11 +9,11 @@ class JWTAuthentication(BaseAuthentication):
     keyword = "CToken"
 
     def authenticate(self, request):
-        header = request.headers.get('Authorization').split()
+        header = request.headers.get('Authorization')
 
-        if not header or header[0].lower() != self.keyword.lower():
+        if not header or header.split()[0].lower() != self.keyword.lower():
             return None
-
+        header = header.split()
         if len(header) == 1:
             raise exceptions.AuthenticationFailed("Invalid token header")
 
